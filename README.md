@@ -1,2 +1,2 @@
 # search-lawyers-react-component-for-wordpress
- Créaton composant react intégré à Wordpress
+ Création composant react intégré à Wordpress selon tutoriel: https://fr.reactjs.org/docs/add-react-to-a-website.html
