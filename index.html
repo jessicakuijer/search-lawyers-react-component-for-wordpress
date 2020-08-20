@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Page wordpress</title>
+   <style>
+      input.form-control,
+      select.form-control {
+         padding: 5px 11px;
+      }
+
+      li.item-lawyer {
+         list-style: none;
+         border-bottom: 1px solid #ccc;
+         margin-bottom: 10px;
+      }
+      ul.item-lawyer {
+         list-style: none;
+         border-bottom: 1px solid #ccc;
+         margin-bottom: 10px;
+      }
+   </style>
+</head>
+
+<body>
+
+   <div id="search-lawyers-container">
+      <!-- ICI S'AFFICHE LE COMPOSANT REACT  -->
+   </div>
+
+
+   <!-- footer.php-->
+
+   <!-- Charge React -->
+   <!-- Remarque : pour le déploiement, remplacez "development.js" par "production.min.js" -->
+   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+   <!-- Charge notre composant React -->
+   <script type="text/babel" src="search-lawyers.js"></script>
+
+</body>
+
+</html>
