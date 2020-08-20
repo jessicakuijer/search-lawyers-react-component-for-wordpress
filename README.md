@@ -2,7 +2,10 @@
 ![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot.PNG)
  Création composant react intégré à Wordpress selon tutoriel: https://fr.reactjs.org/docs/add-react-to-a-website.html
 
-HTML intégré dans une page wordpress et fichier js rajouté dans un dossier du serveur wordpress.
+- code HTML intégré dans une page wordpress et fichier js rajouté dans un dossier /react sur serveur du site wordpress, au même endroit que wp-admin/wp-content/wp-includes
+- Modification du permalien de la page utilisée vers le chemin du dossier /react/nomdelapage
+
+
  
  1. Clone repository
  2. Ouvrir js file et aller sur {/* AFFICHER LA LISTE DES RESULTATS */}
