@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Feedback Lawyers - Je cherche un avocat</title>
+   <style>
+      input.form-control,
+      select.form-control {
+         padding: 5px 11px;
+      }
+
+      li.item-lawyer {
+         list-style: none;
+         border-bottom: 1px solid #ccc;
+         margin-bottom: 10px;
+      }
+      ul.item-lawyer {
+         list-style: none;
+         border-bottom: 1px solid #ccc;
+         margin-bottom: 10px;
+      }
+   </style>
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+   <!-- Axentix CSS minified version -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/axentix@1.0.0-beta.1/dist/css/axentix.min.css">
+   <!-- CSS custom -->
+   <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="layout with-sidenav">
+   <header>
+     <nav class="navbar shadow-1 primary">
+       <a href="#" target="_blank" class="navbar-brand">DEMO</a>
+       <div class="navbar-menu ml-auto">
+         <a class="navbar-link" href="#">Link 1</a>
+         <a class="navbar-link" href="#">Link 2</a>
+         <a class="navbar-link" href="#">Link 3</a>
+         <a class="navbar-link" href="#">Link 4</a>
+       </div>
+     </nav>
+   </header>
+
+   
+
+   <div id="example-sidenav" data-ax="sidenav" class="sidenav shadow-1 large fixed white">
+     <div class="sidenav-header">
+       <button data-target="example-sidenav" class="sidenav-trigger"><i class="fas fa-times"></i></button>
+       <img class="logo" src="FBLV.png" alt="Logo" />
+     </div>
+     <a href="#" class="sidenav-link active">Link 1</a>
+     <a href="#" class="sidenav-link">Link 2</a>
+     <a href="#" class="sidenav-link">Link 3</a>
+     <a href="#" class="sidenav-link">Link 4</a>
+   </div>
+
+   <main>
+     <!-- Code here the main content -->
+     <a data-target="example-sidenav" class="press sidenav-trigger hide-md-up  ml-10">
+      <i class="fas fa-bars"></i>
+      </a>
+     <div id="search-lawyers-container">
+      <!-- ICI S'AFFICHE LE COMPOSANT REACT  -->
+   </div>
+   </main>
+
+   <!-- footer -->
+   <footer class="footer primary">
+      Copyright © 2020 - Example
+    </footer>
+
+   <!-- Charge React -->
+   <!-- Remarque : pour le déploiement, remplacez "development.js" par "production.min.js" -->
+   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+   <!-- Charge notre composant React -->
+   <script type="text/babel" src="search-lawyers.js"></script>
+
+   <!-- Axentix JS minified version -->
+<script src="https://cdn.jsdelivr.net/npm/axentix@1.0.0-beta.1/dist/js/axentix.min.js"></script>
+
+</body>
+
+</html>
