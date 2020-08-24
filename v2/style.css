@@ -1,3 +1,37 @@
 .logo {
     max-width: 240px;
 }
+
+ul.lawyers li img {
+    width: 50px;
+    height: auto;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.d-flex {
+    display: flex;
+}
+.results {
+    border:1px solid #ccc;
+    padding: 20px;
+}
+.mr {
+    margin-right: 55px;
+}
+.align-center {
+    align-items: center;
+}
+ul.spe {
+    padding: 0;
+}
+ul.spe li, ul.lawyers li{
+    list-style:none
+}
+ul.lawyers {
+    padding: 0;
+}
+span.city {
+    display: block;
+    color: #aaa
+}

@@ -4,25 +4,40 @@ class SearchLawyers extends React.Component {
 
    constructor(props) {
       super(props);
-      this.state = { isLoading: false, lawyers: [], suggestedSpecialties: [], specialties: [], userSearchString:'', selectedSpecialty:'' };
+      this.state = { 
+         isLoading: false, 
+         lawyers: [], 
+         suggestedSpecialties: [], 
+         specialties: [], 
+         userSearchString:'', // la recherche de l'utilisateur dans l'input
+         selectedSpecialty:'' };
       console.log(this);
       this.getSpecialities().then((spe) => this.setState({ specialties: spe }))
    }
 
-   setUserSearchString(event) {
-      console.log(event.target.value);
+   async setUserSearchString(event) {
+      let userSearch = event.target.value;
       // si la recherche utilisateur est un domaine de compétences connu ou un avocat connu 
-      if(event.target.value.length==0) {
-         this.setState({ suggestedSpecialties:[]  });
+      if( userSearch.length==0) {
+         this.setState({ suggestedSpecialties:[], lawyers:[]  });
       }
       else {
-         let suggested = this.state.specialties.filter( s => s.displayFrFr.toLowerCase().includes(event.target.value.toLowerCase()) );
-         this.setState({userSearchString : event.target.value, suggestedSpecialties:suggested  });
+         let suggestedSpe = this.state.specialties.filter( s => 
+            s.displayFrFr.toLowerCase().includes(userSearch.toLowerCase()) );
+
+         let suggestedLawyers = await this.onSearchGetLawyers(userSearch);
+
+
+
+         this.setState({userSearchString : userSearch, suggestedSpecialties:suggestedSpe,  lawyers: suggestedLawyers  });
+
       }
    }
 
 
    async searchLawyers(ev) {
+      ev.preventDefault();
+      console.log(this.state);
       //console.log("kjhkjhkjh")
       //1 recuperer la saisie utilisateur
       let userSearchTerm = this.state.userSearchString;
@@ -39,76 +54,74 @@ class SearchLawyers extends React.Component {
     
    }
 
+   debounce(callback, wait) {
+      let timeout;
+      return (...args) => {
+          const context = this;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => callback.apply(context, args), wait);
+      };
+  }
+
    render() {
       return (
-         <form>
+        
             <div className="grix xs1 sm2 container d-block">
-            <p>{TOKENJESS}</p>
+         
                <div className="form-field">
+               <form onSubmit={(e)=>this.searchLawyers(e)}>
                   <p className="font-w600">Je cherche un avocat : </p>
-            <input onKeyUp={event => this.setUserSearchString(event)} className="form-control rounded-1" placeholder='Nom ou domaine de compétences...' />
+            <input onKeyUp={(e) => {let ev = e; this.debounce(this.setUserSearchString(ev), 500) }} className="form-control rounded-1" placeholder='Nom ou domaine de compétences...' />
             {/*input*/}
-            <div className="dropdown-content white shadow-1 rounded-1">
-               <a className="dropdown-item" href="#">
-                  {this.state.suggestedSpecialties.map(suggest => <p key={suggest.id}>{suggest.displayFrFr}</p>)}
-               </a>
+
+            {/* SI IL Y A DES RESULTATS ON AFFICHE div.results  */}
+            {this.state.suggestedSpecialties.length != 0 || this.state.lawyers !=0 &&
+            <div className="results">
+               <ul className="spe">      
+                  {this.state.suggestedSpecialties.map(suggest => 
+                  <li key={suggest.id}>{suggest.displayFrFr}</li>)}
+                
+               </ul>
+               <hr/>
+               <ul className="lawyers">
+               {this.state.lawyers.map( (lawyer) => 
+                  <li key={lawyer.id}>
+                  {/* <img src={lawyer.user.profilePictureUrl} */}
+                  <span className="d-flex align-center">
+                     {lawyer.user == undefined || lawyer.user.profilePictureUrl==undefined ?  <img src="icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} /> }
+                     {/* <img src="icon-defaultprofilepicture.png" /> */}
+                     <strong>{lawyer.cabName}</strong> - {lawyer.lastName} {lawyer.firstName}
+                  </span>
+                 
+                  <span className="city mr">{lawyer.workAddressCity}</span>
+
+                  
+                  </li>)
+                  }
+               
+               </ul>
+            
             </div>
+            }
             
             {/* <select onChange={(event) => this.selectSpeciality(event)} className="form-control">
                {this.state.specialties.map((specialty) =>
                   <option value={specialty.id} key={specialty.id}>{specialty.displayFrFr}</option>
                )}
             </select> */}
+            
             <div className="form-field">
-               <button className="btn shadow-1 rounded-1 outline txt-blue" onClick={(event) => this.searchLawyers(event)}><span className="outline-text">Rechercher</span></button>
+               <button type="submit" className="btn shadow-1 rounded-1 outline txt-blue" >
+                       <span className="outline-text">Rechercher</span>
+               </button>
             </div>
+            </form>
             <p>{this.state.isLoading ? "Chargement en cours..." : this.state.lawyers.length + " résultats"}</p>
                
-            <ul>
-            {/* AFFICHER LA LISTE DES RESULTATS */}
-            {this.state.lawyers.map( (lawyer) =>
-               
-               <a href={'/lawyers?'+lawyer.id} key={lawyer.id} className="item-lawyer">
-                  {/* TODO : faire afficher la photo */}
-                  <h4>Photo:  </h4> <img src={lawyer.profilePictureUrl} /><br />
-
-                  <h4>Nom : </h4>{lawyer.lastName} <br />
-                  <h4>Prénom :</h4>{lawyer.firstName}<br />
-                  <h4>Cabinet: </h4> {lawyer.cabName}<br />                  
-                  <h4>Adresse: </h4>{lawyer.workAddressLine1}<br />
-                  {lawyer.workAddressZipcode} {lawyer.workAddressCity}<br />
-
-                  {/* TODO : Rajouter un mailto */}
-                  <h4>Email: </h4> {lawyer.emailAddress}<br />
-                  {/* TODO : Rajouter un href target _blank */}
-                  <h4>Site web: </h4> {lawyer.websiteUrl}<br />
-                  
-
-                  {/* TODO : Faire afficher un string "oui" pour l'aide juridictionnelle ou phrase "Maitre NOM propose de l'aide juridictionnelle si oathTakenDate = true / idem pour false " */}
-                  <h4>Aide juridictionnelle: </h4>{lawyer.legalAidAvailable}<br />
-                  {/* TODO : Faire afficher la date en formate Datetime fr */}
-                  <h4>Date de prestation de serment: </h4>{lawyer.oathTakenDate}<br />
-
-                  <h4>Présentation: </h4>{lawyer.presentation}<br />
-                  <h4>Domaine de compétences: </h4>
-                 
-                     {lawyer.specialties.map( (specialty, i) => 
-                        <p key={i}>{specialty.displayFrFr}</p>
-                       
-                  )}
-                
-
-                  {/* TODO : Faire afficher la langue correctement / partie name de l'array */}
-                  <h4>Langue(s) parlée(s): </h4>{JSON.parse(lawyer.languages).map((language, i) => 
-                     <p key={i}>{language.name}</p>
-                  )}
-               </a>
-                            
-            )}  {/* fin map */}
-            </ul>
+           
          </div>
          </div>
-         </form>
+        
       );
    }
 
@@ -123,7 +136,7 @@ class SearchLawyers extends React.Component {
    */
    async getSpecialities() {
       let myHeaders = new Headers({
-         'Authorization': 'Bearer ' + TOKENJESS,
+         'Authorization': 'Bearer ' + ENV_TOKENJESS,
          'Content-Type': 'application/json'
       });
       // make api call to get lawyers array
@@ -151,18 +164,20 @@ class SearchLawyers extends React.Component {
     Role : récuperer la liste des avocats lors de la recherche
     @param : userSearchTerm:string
    */
-   async onSearchGetLawyers(userSearchTerm) {
+   async onSearchGetLawyers(userSearchStr) {
+     
       let myHeaders = new Headers({
-         'Authorization': 'Bearer d68406ad89cf138517e85a0cb1d25589:6d27a26c0f1cb45e4541088de4abd7ba76e44b784ea11519070a917dbe2ad24d730a45d571041ad5e115bd2f5e385188ae551d26e35a588f574056fecab35733912948795001ed5a4900f935ec7a9a20da07a8861e74a11b01687d2ac81232c29343bc018b14e0fbd8d9d2a809684160',
+         'Authorization': 'Bearer ' + ENV_TOKENJESS,
          'Content-Type': 'application/json'
       });
+      console.log('Recherche user: ', userSearchStr);
       /*
       si la recherche est un spécialité alors call aPI .....speciality[]=12
       si la recherche est un nom alors le call api .... '&pattern='+userSearchTerm
       */
       // make api call to get lawyers array
       let response = await fetch(
-         'https://staging.app.feedbacklawyers.com/api/companies/search?specialty[]='+this.state.selectedSpecialty+'&cities[]=paris',
+         'https://staging.app.feedbacklawyers.com/api/companies/search?pattern='+userSearchStr,
          //+
          //'&pattern='+userSearchTerm,
          {
