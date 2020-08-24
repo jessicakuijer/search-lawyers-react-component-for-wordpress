@@ -29,6 +29,7 @@ class SearchLawyers extends React.Component {
    }
 
    render() {
+      
       return (
          <div>
             <input className="form-control" onKeyUp={(event) => this.searchLawyers(event)} placeholder='Rechercher...' />
@@ -45,7 +46,7 @@ class SearchLawyers extends React.Component {
                <ul key={lawyer.id}>
                <li key={lawyer.id} className="item-lawyer">
                   {/* TODO : faire afficher la photo */}
-                  <h4>Photo:  </h4> <img src={lawyer.profilePictureUrl} /><br />
+                  <h4>Photo:  </h4> <img src={lawyer.user.profilePictureUrl} /><br />
                   <h4>Nom : </h4>{lawyer.lastName} <br />
                   <h4>Prénom :</h4>{lawyer.firstName}<br />
                   <h4>Cabinet: </h4> {lawyer.cabName}<br />                  
@@ -60,8 +61,11 @@ class SearchLawyers extends React.Component {
 
                   {/* TODO : Faire afficher un string "oui" pour l'aide juridictionnelle ou phrase "Maitre NOM propose de l'aide juridictionnelle si oathTakenDate = true / idem pour false " */}
                   <h4>Aide juridictionnelle: </h4>{lawyer.legalAidAvailable}<br />
-                  {/* TODO : Faire afficher la date en formate Datetime fr */}
-                  <h4>Date de prestation de serment: </h4>{lawyer.oathTakenDate}<br />
+                  
+                  {/* Afficher la date en format fr avec MomentJS */}
+                  <h4>Date de prestation de serment: </h4>{`${moment(lawyer.oathTakenDate).format(
+                        'DD/MM/YYYY'
+                      )}`}<br />
 
                   <h4>Présentation: </h4>{lawyer.presentation}<br />
                   <h4>Domaine de compétences: </h4>
@@ -69,8 +73,8 @@ class SearchLawyers extends React.Component {
                         <p key={i}>{specialty.displayFrFr}</p>
                   ))}
 
-                  {/* TODO : Faire afficher la langue correctement / partie name de l'array */}
-                  <h4>Langue(s) parlée(s): </h4>{lawyer.languages}<br />
+                  {/* Afficher la langue correctement / partie name de l'array avec JSON.parse */}
+                  <h4>Langue(s) parlée(s): </h4>{JSON.parse(lawyer.languages).map(l => l.name).join(' - ')}<br />
                </li>
                </ul>
 
