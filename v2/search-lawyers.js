@@ -54,50 +54,39 @@ class SearchLawyers extends React.Component {
     
    }
 
-   debounce(callback, wait) {
-      let timeout;
-      return (...args) => {
-          const context = this;
-          clearTimeout(timeout);
-          timeout = setTimeout(() => callback.apply(context, args), wait);
-      };
-  }
+   
 
    render() {
       return (
         
-            <div className="grix xs1 sm2 container d-block">
-         
+            <div className="grix xs1 sm2 container d-block">         
                <div className="form-field">
+                  
                <form onSubmit={(e)=>this.searchLawyers(e)}>
                   <p className="font-w600">Je cherche un avocat : </p>
-            <input onKeyUp={(e) => {let ev = e; this.debounce(this.setUserSearchString(ev), 500) }} className="form-control rounded-1" placeholder='Nom ou domaine de compétences...' />
+            <input onKeyUp={(e) => this.setUserSearchString(e)} className="form-control rounded-1" placeholder='Nom ou domaine de compétences...' />
             {/*input*/}
 
             {/* SI IL Y A DES RESULTATS ON AFFICHE div.results  */}
-            {this.state.suggestedSpecialties.length != 0 || this.state.lawyers !=0 &&
+            {(this.state.suggestedSpecialties.length != 0 || this.state.lawyers !=0) &&
             <div className="results">
                <ul className="spe">      
                   {this.state.suggestedSpecialties.map(suggest => 
                   <li key={suggest.id}>{suggest.displayFrFr}</li>)}
-                
                </ul>
                <hr/>
                <ul className="lawyers">
                {this.state.lawyers.map( (lawyer) => 
                   <li key={lawyer.id}>
-                  {/* <img src={lawyer.user.profilePictureUrl} */}
-                  <span className="d-flex align-center">
+                     <span className="d-flex align-center">
                      {lawyer.user == undefined || lawyer.user.profilePictureUrl==undefined ?  <img src="icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} /> }
-                     {/* <img src="icon-defaultprofilepicture.png" /> */}
                      <strong>{lawyer.cabName}</strong> - {lawyer.lastName} {lawyer.firstName}
-                  </span>
+                     </span>
                  
-                  <span className="city mr">{lawyer.workAddressCity}</span>
+                     <span className="city">{lawyer.workAddressCity}</span>
 
-                  
                   </li>)
-                  }
+               }
                
                </ul>
             
@@ -116,7 +105,7 @@ class SearchLawyers extends React.Component {
                </button>
             </div>
             </form>
-            <p>{this.state.isLoading ? "Chargement en cours..." : this.state.lawyers.length + " résultats"}</p>
+            <p>{this.state.isLoading ? "Chargement en cours..." : this.state.lawyers.length + " résultats" && this.state.suggestedSpecialties}</p>
                
            
          </div>

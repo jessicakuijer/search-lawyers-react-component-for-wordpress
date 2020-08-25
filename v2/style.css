@@ -4,7 +4,7 @@
 
 ul.lawyers li img {
     width: 50px;
-    height: auto;
+    height: 50px;
     border-radius: 50%;
     margin-right: 5px;
 }
@@ -16,9 +16,12 @@ ul.lawyers li img {
     border:1px solid #ccc;
     padding: 20px;
 }
-.mr {
-    margin-right: 55px;
+span.city {
+    display: block;
+    color: #aaa;
+    margin-left: 55px;
 }
+
 .align-center {
     align-items: center;
 }
@@ -30,8 +33,4 @@ ul.spe li, ul.lawyers li{
 }
 ul.lawyers {
     padding: 0;
-}
-span.city {
-    display: block;
-    color: #aaa
 }

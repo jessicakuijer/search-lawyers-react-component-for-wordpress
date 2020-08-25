@@ -1,0 +1,85 @@
+.logo {
+    max-width: 240px;
+}
+
+ul.lawyers li img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 16px;
+}
+
+.d-flex {
+    display: flex;
+}
+.dir-column {
+    flex-direction: column;
+}
+.results {
+    border:1px solid #ccc;
+    max-height: 390px;
+    overflow: auto;
+    font-size: 14px;
+}
+.align-center {
+    align-items: center;
+}
+ul.spe, ul.lawyers {
+    padding: 0;
+    margin: 0px 0 0 0;
+}
+.results hr {
+    margin: 0;
+    border: 1px solid #28d1e7;
+}
+ul.spe li, ul.lawyers li{
+    list-style:none;
+    padding: 7px 16px
+}
+ul.lawyers {
+    padding: 0;
+}
+span.city {
+    display: block;
+    color: #aaa;
+    font-size: 85%;
+}
+.results ul.lawyers li:hover, .results ul.spe li:hover {
+    background: rgb(228, 245, 255);
+    cursor: pointer;
+}
+.w50 {
+    width: 50px;
+}
+form {
+    position: relative;
+}
+.spinner {
+    position: absolute;
+    top: 5px;
+    z-index: 1;
+    right: 16px;
+}
+.searchIcon {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 21px;
+    height: 21px;
+    pointer-events: none;
+    fill: #7791a2;
+    z-index: 1;
+}
+.searchIcon i {
+    color: #7791a2;
+}
+input.form-control{
+    padding: 5px 40px;
+}
+.sidenav .sidenav-header .logo {
+    max-width: 100%;
+    background: rgb(181, 213, 255);
+}
+.sidenav .sidenav-header {
+    padding: 0;
+}
