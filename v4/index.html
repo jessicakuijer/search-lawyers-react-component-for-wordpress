@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Feedback Lawyers - Rechercher un avocat</title>
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+   <!-- Axentix CSS minified version -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/axentix@1.0.0-beta.1/dist/css/axentix.min.css">
+   <!-- CSS custom -->
+   <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="layout with-sidenav">
+   <header>
+      <nav class="navbar shadow-1 primary">
+         <a href="#" target="_blank" class="navbar-brand">DEMO</a>
+      </nav>
+   </header>
+
+
+   <div id="example-sidenav" data-ax="sidenav" class="sidenav shadow-1 large fixed white">
+      <div class="sidenav-header">
+         <button data-target="example-sidenav" class="sidenav-trigger"><i class="fas fa-times"></i></button>
+         <img class="logo" src="FBLV.png" alt="Logo" />
+      </div>
+      <a href="#" class="sidenav-link">Link 1</a>
+      <a href="#" class="sidenav-link">Link 2</a>
+      <a href="#" class="sidenav-link">Link 3</a>
+   </div>
+
+   <main>
+      <!-- Code here the main content -->
+      <div id="search-lawyers-container">
+         <!-- ICI S'AFFICHE LE COMPOSANT REACT  -->
+      </div>
+   </main>
+
+   <!-- footer -->
+   <footer class="footer primary">
+      Copyright ©2020
+   </footer>
+
+   <!-- Charger les variables d environnement -->
+   <script src="env.js"></script>
+
+   <!-- Charger les SVG xml -->
+   <script src="svgelements.js"></script>
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"
+      integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww=="
+      crossorigin="anonymous"></script>
+
+   <!-- Charge React -->
+   <!-- Remarque : pour le déploiement, remplacez "development.js" par "production.min.js" -->
+   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+   <!-- Charge notre composant React -->
+   <script type="text/babel" src="search-lawyers.js"></script>
+
+   <!-- Axentix JS minified version -->
+   <script src="https://cdn.jsdelivr.net/npm/axentix@1.0.0-beta.1/dist/js/axentix.min.js"></script>
+
+   <!-- Charge MomentJS de React pour afficher une date en format lisible -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+      integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg=="
+      crossorigin="anonymous"></script>
+</body>
+
+</html>
