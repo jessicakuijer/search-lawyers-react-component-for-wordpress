@@ -125,21 +125,28 @@ class SearchLawyers extends React.Component {
    /****************************************************/
    render() {
       return (
-         <div className="grix xs1 sm2 container d-block">
-            <h1 className="font-w600">Recherchez un avocat</h1>
-            <div className="form-field">
+         <div className="container-fluid">
+            <h1>Recherchez un avocat</h1>
+            <div className="">
                <form>
                   {(this.state.isLoading && this.state.userSearchString.trim().length > 0) ?
-                     <div className="spinner small txt-blue w50">
-                        <svg viewBox="25 25 50 50"><circle className="spinner-path" cx="50" cy="50" r="20" fill="none" strokeWidth="3" /></svg>
+                     <div className="spinner">
+                        <img src="./images/spinner.gif"/>
                      </div> : ""
                   }
                   {/* <span className="searchIcon" dangerouslySetInnerHTML={{ __html: searchIcon }}></span> */}
                   <span className="searchIcon"><i className="fas fa-search"></i></span>
-                  <div className="d-flex align-center">
-                     <input value={this.state.userSearchString} className="form-control rounded-1" placeholder='avocat, cabinet, domaine juridique...'
+                  <div className="">
+                     
+                        <div className="input-group-prepend">
+                     <input value={this.state.userSearchString} className="form-control" placeholder='Avocat, domaine de compétences...'
                         onFocus={() => this.handleFocusOpenResultsBox()}
                         onChange={e => this.handleChangeOnUserSearch(e)} />
+                     
+                     <input className="form-control" placeholder='Ville' />
+                        </div>
+                        
+                     
                   </div>
                   {/* SI L'UTILISATEUR EST focus dans l'input de recherche on affiche la div.results */}
                   {this.state.isResultsBoxOpened == true ?
@@ -159,7 +166,7 @@ class SearchLawyers extends React.Component {
                               <li key={lawyer.id}>
                                  <a href={this.getLinkToProfileUrl(lawyer.workAddressCity, lawyer.lastName, lawyer.firstName)}>
                                     <div className="d-flex align-center">
-                                       {lawyer.user == undefined || lawyer.user.profilePictureUrl == undefined ? <img src="icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} />}
+                                       {lawyer.user == undefined || lawyer.user.profilePictureUrl == undefined ? <img src="./images/icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} />}
                                        <span className="d-flex dir-column">
                                           {lawyer.lastName} {lawyer.firstName}
                                           <span className="city mr"> <strong>{lawyer.cabName}</strong>  {lawyer.workAddressCity}</span>
