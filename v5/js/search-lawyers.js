@@ -148,6 +148,7 @@ class SearchLawyers extends React.Component {
                         
                      
                   </div>
+                  <span className="searchIcon"><i className="fas fa-search"></i></span>
                   {/* SI L'UTILISATEUR EST focus dans l'input de recherche on affiche la div.results */}
                   {this.state.isResultsBoxOpened == true ?
                      <div className="results">
@@ -160,7 +161,7 @@ class SearchLawyers extends React.Component {
 
                         {(this.state.suggestedSpecialties.length != 0 && this.state.lawyers.length != 0) && <hr />}
 
-                        {/* LIST DES AVOCATS */}
+                        {/* LISTE DES AVOCATS */}
                         <ul className="lawyers">
                            {this.state.lawyers.map((lawyer) =>
                               <li key={lawyer.id}>
