@@ -30,6 +30,11 @@ ul.lawyers li img {
   max-height: 390px;
   overflow: auto;
   font-size: 14px;
+  position: absolute;
+  width: 50%;
+  background: white;
+  z-index: 1;
+  text-align: left;
 }
 .align-center {
   align-items: center;
@@ -57,6 +62,9 @@ span.city {
 .results ul.lawyers li:hover, .results ul.spe li:hover {
   background: rgb(228, 245, 255);
   cursor: pointer;
+}
+.relative {
+  position: relative;
 }
 .w50 {
   width: 50px;

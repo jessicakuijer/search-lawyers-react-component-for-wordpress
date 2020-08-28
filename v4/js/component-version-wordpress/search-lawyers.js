@@ -132,7 +132,7 @@ class SearchLawyers extends React.Component {
                <form>
                   {(this.state.isLoading && this.state.userSearchString.trim().length > 0) ?
                      <div className="spinner">
-                        <img src="./images/spinner.gif"/>
+                        <img src="/react3/images/spinner.gif"/>
                      </div> : ""
                   }
                   {/* <span className="searchIcon" dangerouslySetInnerHTML={{ __html: searchIcon }}></span> */}
@@ -168,7 +168,7 @@ class SearchLawyers extends React.Component {
                               <li key={lawyer.id}>
                                  <a href={this.getLinkToProfileUrl(lawyer.workAddressCity, lawyer.lastName, lawyer.firstName, lawyer.id)}>
                                     <div className="d-flex align-center">
-                                       {lawyer.user == undefined || lawyer.user.profilePictureUrl == undefined ? <img src="./images/icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} />}
+                                       {lawyer.user == undefined || lawyer.user.profilePictureUrl == undefined ? <img src="/react3/images/icon-defaultprofilepicture.png" /> : <img src={lawyer.user.profilePictureUrl} />}
                                        <span className="d-flex dir-column">
                                           {lawyer.lastName} {lawyer.firstName}
                                           <span className="city mr"> <strong>{lawyer.cabName}</strong>  {lawyer.workAddressCity}</span>
