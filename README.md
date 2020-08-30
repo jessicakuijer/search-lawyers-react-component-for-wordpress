@@ -2,8 +2,11 @@
 - Version 1:
 ![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot.PNG)
 
-- Version 2: 
-![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/v2/screenshot2.png)
+- Version 2/3: 
+![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot2.png)
+
+- Version 4:
+![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot3.png)
 
  Création composant react intégré à Wordpress selon tutoriel: https://fr.reactjs.org/docs/add-react-to-a-website.html
 
