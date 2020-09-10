@@ -414,7 +414,7 @@ button {
 }
 
 .section {
-  padding: 100px 0;
+  padding: 20px 0;
 }
 
 .section-sm {
@@ -733,7 +733,7 @@ ul.pagination .active a {
 }
 
 .bg-1 {
-  background: url(../images/AdobeStock_311597813.jpeg);
+  background: url(../images/background.jpg);
   background-size: cover;
   background-repeat: no-repeat;
 }
