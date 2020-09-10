@@ -17,12 +17,9 @@
  
  1. Clone repository
  2. Ouvrir js file et aller sur {/* AFFICHER LA LISTE DES RESULTATS */}
- 3. J'ai mis volontairement des TODOs car ce sont mes points de blocages
- 4. Quand vous testerez le composant en ouvrant le fichier html, cherchez "john" (John Lancaster) ou Gery (Gery Tang Seng)
- - le composant se base sur la version STAGING de l'api avec ces faux avocats, profils complets avec un commentaire.
- - les champs vides du resultat correspondent à mes points de blocage
+ 3. Quand vous testerez le composant en ouvrant les différentes versions via fichier html, cherchez "john" (John Lancaster) ou Gery (Gery Tang Seng)
+ - le composant se base sur la version STAGING de l'api avec ces faux avocats, profils complets avec un commentaire type avis client.
+ 
  5. Questions:
- - Comment afficher la photo à partir d'une Uri?
- - Comment afficher la ou les langues parlées sachant que celle(s)-ci apparait dans un array json?
  - Comment afficher une phrase disant que l'avocat propose l'aide juridictionnelle?
- - Comment afficher/transformer le format de date?
+ - Comment utiliser .htaccess sur un wordpress et faire une réecriture d'URL avec des termes compréhensibles SEO?
