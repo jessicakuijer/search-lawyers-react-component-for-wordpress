@@ -21,4 +21,4 @@
  - le composant se base sur la version STAGING de l'api avec ces faux avocats, profils complets avec un commentaire type avis client.
  
 4. le dossier "component version wordpress" sert à inclure les fichiers au sein d'un thème. Afin d'intégrer le composant, il faut insérer le nécéssaire dans une page HTML comme ceci par exemple:
-![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot4.png)
+![ScreenShot](https://github.com/jessicakuijer/search-lawyers-react-component-for-wordpress/blob/master/screenshot4.PNG)
