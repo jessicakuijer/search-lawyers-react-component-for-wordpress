@@ -7,9 +7,10 @@ body {
 
 /*=== CSS pour le composant REACT ===*/
 .logo {
-  vertical-align: middle;
-  border-style: none;
-  max-width: 220px;
+  vertical-align: middle !important;
+  border-style: none !important;
+  max-width: 200px !important;
+  border-radius: 10px !important;
 }
 
 ul.lawyers li img {
@@ -418,12 +419,13 @@ button {
 }
 
 .section-sm {
-  padding: 70px 0;
+  padding: 20px 0;
 }
 
 .section-title {
   position: relative;
   margin-bottom: 75px;
+  margin-top: 75px;
   text-align: center;
 }
 
@@ -611,6 +613,20 @@ button {
   color: #5672f9;
   box-shadow: none;
 }
+.btn-lawyer {
+  color: white;
+  background: #4E58A2;
+}
+.btn-lawyer:hover{
+  color: white;
+  background: #5672f9;
+}
+.link-footer {
+  color: white;
+}
+.link-footer:hover{
+  color: #5672f9;
+}
 
 /**
  *
@@ -691,8 +707,8 @@ ul.pagination .active a {
 }
 
 .page-search {
-  background: #5672f9;
-  padding: 30px 0;
+  background: #4E58A2;
+  padding: 12px 0;
 }
 
 .page-search .advance-search .form-group {
@@ -730,10 +746,16 @@ ul.pagination .active a {
 
 .bg-gray {
   background: #F5F5F5;
+  background-image: url(/react3/images/notation2.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.bg-gray2 {
+  background: #F5F5F5;
 }
 
 .bg-1 {
-  background: url(../images/AdobeStock_311597813.jpeg);
+  background: url(../images/background.jpg);
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -755,7 +777,7 @@ ul.pagination .active a {
 }
 
 .navigation {
-  padding: 20px 0;
+  padding: 5px 0;
 }
 
 .navigation .navbar-nav {
@@ -1370,11 +1392,12 @@ ul.pagination .active a {
   padding: 20px 25px;
   border-radius: 3px;
   margin-bottom: 25px;
+  background: whitesmoke;
 }
 
 .category-block .header {
   margin-bottom: 20px;
-  border-bottom: 3px solid #F4F7F9;
+  border-bottom: 3px solid lightgray;
   text-align: center;
 }
 
@@ -1645,8 +1668,16 @@ ul.pagination .active a {
 }
 
 .product-details .content p {
-  color: #888;
+  color: #3F4692;
+  font-size: 1em;
   line-height: 22px;
+}
+.grades {
+  color: #3F4692;
+  font-size: 0.8em;
+  line-height: 0em;
+  line-height: 1em;
+  display: flex;
 }
 
 .product-details .content .nav {
@@ -1670,7 +1701,7 @@ ul.pagination .active a {
 }
 
 .product-details .content .nav .nav-item .nav-link.active {
-  background: #5672f9;
+  background: #4E58A2;
 }
 
 .product-details .content .tab-content {
@@ -1727,9 +1758,11 @@ ul.pagination .active a {
   padding-left: 25px;
 }
 
+
+
 .product-review img {
-  width: 60px;
-  margin-right: 20px;
+  width: 120px;
+  margin-right: 10px;
 }
 
 .product-review .name h5 {
@@ -1738,11 +1771,18 @@ ul.pagination .active a {
 }
 
 .product-review .media-body {
-  background: #fff;
+  background: #fcfcfc;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
   padding: 30px;
   margin-bottom: 30px;
   border-radius: 2px;
+  border: 1px solid lavender;
+  position: relative;
+}
+.product-review .media-body  img{
+  position: absolute;
+  top: 5px;
+  right: 0px;
 }
 
 .product-review .review-submission h5 {
@@ -2682,7 +2722,7 @@ form textarea {
 }
 
 .footer .block.about img {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .footer .block.about p {
@@ -2721,7 +2761,7 @@ form textarea {
 .footer .block-2 {
   padding: 18px 30px;
   background: #46484A;
-  border-radius: 2px;
+  border-radius: 10px;
 }
 
 .footer .block-2.app-promotion {
@@ -2745,7 +2785,7 @@ form textarea {
 .footer-bottom {
   position: relative;
   background: #363839;
-  padding: 25px 0;
+  padding: 15px 0;
 }
 
 @media (max-width: 480px) {
@@ -2803,3 +2843,95 @@ form textarea {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+.criteria-ratings {
+  font-size : 85% !important;
+  color: #F7B705 !important;
+}
+ 
+.average-rating {
+  color: #F7B705 !important;
+
+}
+
+.apple {
+  max-width: 100% !important;
+}
+.google {
+  max-width: 55% !important;
+  margin-left: 1px !important;
+}
+.white {
+  color: white !important;
+  margin-right: 10px;
+}
+.white2 {
+  color: white !important;
+}
+.mobile {
+  max-width: 100% !important;
+}
+.mobile-fl {
+  max-width: 12% !important;
+  margin-bottom: 5px !important;
+}
+
+.footer-width {
+  padding-right: 30px !important;
+  padding-left: 30px !important;
+}
+
+.container-footer{
+margin-right: 10px !important;
+margin-left: 10px !important;
+}
+.row-nowrap {
+  display: -ms-flexbox !important;
+  display: flex !important;
+  margin-right: -15px !important;
+  margin-left: -15px !important;
+}
+
+.section-video {
+  padding: 20px 0 !important;
+  background-image: url(/react3/images/white-bg-video.jpg) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+.btn-search-lawyers {
+  background: #4E58A2 !important;
+  margin: auto !important;
+}
+.btn-search-lawyers:hover {
+  background: #5672f9 !important;
+}
+.md-25 {
+  margin-bottom: 25px !important;
+}
+
+.mt-15{
+  margin-top: 15px !important;
+}
+.flex-center-div {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 480px){
+  .media-body{
+    font-size: 12px;
+  }
+  .product-review img {
+    width: 80px;
+    margin-right: 10px;
+  }
+  h4 {
+    font-size: 14px !important;
+  }
+  .mobile-fl {
+    display: none;
+  }
+  
+}
+

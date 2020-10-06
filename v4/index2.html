@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+<script src="https://cdn.jsdelivr.net/npm/places.js@1.19.0"></script>
+</head>
+
+<body>
+    <input type="search" id="city" class="form-control" placeholder="In which city do you live?" />
+</body>
+<script>
+(function() {
+  var placesAutocomplete = places({
+    // appId: '<YOUR_PLACES_APP_ID>',
+    // apiKey: '<YOUR_PLACES_API_KEY>',
+    container: document.querySelector('#city'),
+    templates: {
+      value: function(suggestion) {
+        return suggestion.name;
+      }
+    }
+  }).configure({
+    type: 'city',
+    aroundLatLngViaIP: false,
+  });
+})();
+</script>
+
+</body>
+
+</html>

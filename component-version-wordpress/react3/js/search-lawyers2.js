@@ -17,7 +17,9 @@ class SearchLawyers extends React.Component {
          selectedSpecialty: '',
          selectedCity : '',
          isResultsBoxOpened: true,
-         placesAutocomplete: {}
+         placesAutocomplete: {},
+         fields: {}, // les champs à controler
+         errors: {} // les erreurs à signaler
       };
       console.log("Je suis le constructor : ", this);
       // Récupération de la liste des spécialités
@@ -36,11 +38,11 @@ class SearchLawyers extends React.Component {
    /*
       handleKeyupOnUserSearch(e)
       Role: afficher la liste des suggestions specialités et avocats, 
-            quand l'utilisateur saisit dans input recherche
+            quand l'utilisateur saisi dans input recherche
       @param : event
    */
    async handleChangeOnUserSearch(ev) {
-      // https://fr.reactjs.org/docs/events.html
+      // e.persist(); https://fr.reactjs.org/docs/events.html
       this.setState({ userSearchString: ev.target.value });
       let userSearch = this.state.userSearchString;
       if (userSearch.length < 2) {
@@ -59,13 +61,19 @@ class SearchLawyers extends React.Component {
       }
    }
 
+   handleChange(field, e){         
+      let fields = this.state.fields;
+      fields[field] = e.target.value;        
+      this.setState({fields});
+  }
+
    handleChangeOnCityInput(ev) {
       // console.log(ev.target.value);
       this.setState({ selectedCity: ev.target.value});
    }
 
    /*
-      role : naviguer vers la page de liste des avocats (par specialité et par ville)
+      role : naviguer vers la page liste des avocats (par specialité et par ville)
       url : /lawyer-list/?specialty=26&city=paris
    */
    handleClickOnSearchLawyers(ev) {
@@ -73,6 +81,13 @@ class SearchLawyers extends React.Component {
       ev.preventDefault();
       let url = 'https://www.feedbacklawyers.com/lawyers-list/?specialty='+this.state.idSelectedSpecialty+'&city='+this.state.selectedCity.toLowerCase();
       window.location.href= url;
+
+      // rajout d'une validation avec contrôle d'erreurs
+      if(this.handleValidation()){
+         alert("Recherche executée");
+      }else{
+         alert("Il manque des informations")
+      }
    }
 
    /*
@@ -90,7 +105,7 @@ class SearchLawyers extends React.Component {
       let companiesFromApi = await this.onSearchGetLawyers(userSearchTerm)
       // request is end, so set isLoading to FALSE
       this.setState({ isLoading: false })
-      // 3 Set lawyers value with response of api call
+      // 3 Set lawyers value  with response of api call
       this.setState({ lawyers: companiesFromApi })
    }
 
@@ -114,7 +129,7 @@ class SearchLawyers extends React.Component {
 
    /*
       setInputValue(str)
-      Role : Remplir le champ input / La fonction est déclenchée 
+      Role : Remplir le champ input / La fonction est déclenché 
              quand l'utilisateur clique sur une spécialité dans la liste
       @Param : str - une chaine de caractère représentant une spécialité (ex: Droit Immobilier)
              
@@ -149,14 +164,14 @@ class SearchLawyers extends React.Component {
    }
 
    /*
-      Fonction "capitalize" pour la ville, première lettre en majuscules
+      Fonction "capitalize" pour la ville, premièré lettre en majuscules
    */
   getCapitalize(str) {
-     // 1: recupérer la première lettre, la mettre en majuscule
+     // 1 recupérer la première lettre, la mettre en majuscule
      let first = str.charAt(0).toUpperCase();
-     // 2: récuperer toutes les autres lettres, les mettre en minuscules
+     // 2 récuperer toutes les autres lettres, les mettre en minuscules
      let rest = str.substring(1).toLowerCase();
-     // 3: concaténer 1ere lettre et les autres et return 
+     // 3 concaténer 1er lettre et les autres et return 
      return first+rest;
   }
 
@@ -181,16 +196,54 @@ class SearchLawyers extends React.Component {
          })})
    }
 
- 
+/* test validation
+*/
+
+handleValidation(){
+   let fields = this.state.fields;
+   let errors = {};
+   let formIsValid = true;
+
+   //Name
+   if(!fields["usersearchlawyers"]){
+      formIsValid = false;
+      errors["usersearchlawyers"] = "Remplir un droit, domaine de compétences";
+   }
+
+   if(typeof fields["usersearchlawyers"] !== "undefined"){
+      if(!fields["usersearchlawyers"].match(/^[a-zA-Z]+$/)){
+         formIsValid = false;
+         errors["usersearchlawyers"] = "Seulement des lettres";
+      }        
+   }
+
+   //Email
+   if(!fields["usersearchcities"]){
+      formIsValid = false;
+      errors["usersearchcities"] = "Remplir une ville";
+   }
+
+   if(typeof fields["usersearchcities"] !== "undefined"){
+      if(!fields["usersearchcities"].match(/^[a-zA-Z]+$/)){
+         formIsValid = false;
+         errors["usersearchcities"] = "Seulement des lettres";
+      }  
+  }  
+
+  this.setState({errors: errors});
+  return formIsValid;
+}
+  
+
+
    /************ 2- PARTIE VUE (render()) *****************/
    /****************************************************/
    render() {
       return (
          <div className="container-fluid">
             <h1>Recherchez un avocat</h1>
-            <h3 class="md-25">(Remplir impérativement les deux champs pour une recherche par domaine de compétences et ville)</h3>
-            <div>
-               <form className="d-flex justify-content-center">
+            <div className="">
+               <form className="d-flex justify-content-center" onSubmit={this.handleClickOnSearchLawyers.bind(this)}>
                   {(this.state.isLoading && this.state.userSearchString.trim().length > 0) ?
                      <div className="spinner">
                         <img src="/react3/images/spinner.gif"/>
@@ -199,10 +252,12 @@ class SearchLawyers extends React.Component {
                  
                 
                  
-                     <div className="flex-sm-fill">
-                        <input value={this.state.userSearchString} className="form-control" placeholder='Avocat, domaine de compétences...'
+                     <div className="flex-fill">
+                     <span style={{color: "red"}}>{this.state.errors["usersearchlawyers"]}</span>
+                        <input refs="usersearchlawyers" value={this.state.userSearchString && this.state.fields["usersearchlawyers"]} className="form-control" placeholder='Avocat, domaine de compétences...'
                         onFocus={() => this.handleFocusOpenResultsBox()}
-                        onChange={e => this.handleChangeOnUserSearch(e)} />
+                        onChange={e => this.handleChangeOnUserSearch(e) && this.handleChange.bind(this, "usersearchlawyers")} />
+                        
 
                         {/* LISTE RESULTATS */}
                         {/* SI L'UTILISATEUR EST focus dans l'input de recherche on affiche la div.results */}
@@ -227,7 +282,7 @@ class SearchLawyers extends React.Component {
                                              <span className="d-flex dir-column">
                                                 {lawyer.lastName} {lawyer.firstName}
                                                 <span className="city mr"> <strong>{lawyer.cabName}</strong>  {lawyer.workAddressCity}, {lawyer.workAddressCountry}</span>
-                                                <span className="city mr"> <strong>{lawyer.ratings.reviewsCount} avis certifié(s)</strong></span>   
+                                                <span className="city mr">{lawyer.ratings.reviewsCount} avis client(s) certifié(s)</span>
                                              </span>
                                           </div>
                                        </a>
@@ -241,7 +296,9 @@ class SearchLawyers extends React.Component {
                      </div>
                   
                      <div className="flex-fill">
-                        <input id="ville" onChange={(e) => this.handleChangeOnCityInput(e)} className="form-control" placeholder='Ville' />
+                        <span style={{color: "red"}}>{this.state.errors["usersearchcities"]}</span>
+                        <input refs="usersearchcities" id="ville" value={this.state.fields["usersearchcities"]} onChange={(e) => this.handleChangeOnCityInput(e) && this.handleChange.bind(this, "usersearchcities") } className="form-control" placeholder='Ville' />
+                       
                      </div>
                      
 
@@ -268,7 +325,7 @@ class SearchLawyers extends React.Component {
    */
    async getSpecialities() {
       let myHeaders = new Headers({
-         'Authorization': 'Bearer ' + ENV_TOKENADMIN,
+         'Authorization': 'Bearer ' + ENV_TOKENJESS,
          'Content-Type': 'application/json'
       });
       // make api call to get lawyers array
@@ -299,7 +356,7 @@ class SearchLawyers extends React.Component {
    async onSearchGetLawyers(userSearchStr) {
       // Configurer le headers de la requête à envoyer
       let myHeaders = new Headers({
-         'Authorization': 'Bearer ' + ENV_TOKENADMIN,
+         'Authorization': 'Bearer ' + ENV_TOKENJESS,
          'Content-Type': 'application/json'
       });
       // make api call to get lawyers array

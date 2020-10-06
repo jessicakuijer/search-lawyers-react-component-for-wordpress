@@ -6,11 +6,70 @@
 * @subpackage Futurio
 * @since Futurio 1.3.0
 */
+
 function pp($data) {
-	print("<pre>" . print_r($data) . '</pre>');
+	echo "<pre>" . print_r($data) . '</pre>';
+}
+/*
+ Afficher les notes par critere
+ 	<i class="fas fa-star"></i>
+	<i class="far fa-star"></i>
+	<i class="fas fa-star-half-alt"></i>
+*/
+function printRatings($score) {
+	$template='';
+	$score = intval($score); // 1 ou 2 ou 3 ou 4 ou 5
+	$numberEmptyStars = 5 - $score;
+	
+	// Generation étoiles pleines
+	for($i=1; $i<=$score; $i++ ) {
+		$template = $template . '<i class="criteria-ratings fas fa-star"></i>';
+	}
+	
+	// Generation étoiles vides
+	if($score < 5) {
+		for($i=1; $i<=$numberEmptyStars; $i++) {
+			$template = $template .'<i class="criteria-ratings far fa-star"></i>';
+		}
+	}
+	return $template;	
 }
 
-$authorization = "Authorization: Bearer d68406ad89cf138517e85a0cb1d25589:6d27a26c0f1cb45e4541088de4abd7ba76e44b784ea11519070a917dbe2ad24d730a45d571041ad5e115bd2f5e385188ae551d26e35a588f574056fecab35733912948795001ed5a4900f935ec7a9a20da07a8861e74a11b01687d2ac81232c29343bc018b14e0fbd8d9d2a809684160";
+function printAverageScore($averageScore) {
+	$template='';
+	$averageScore = floatval($averageScore); // ex: 2 ou 3.5
+	$numberEmptyStars = 5 - floor($averageScore);
+	$is_decimal =  (floatval($averageScore) -  floor($averageScore)) != 0; // TRUE ou FALSE
+	//var_dump($is_decimal);
+	// Generation étoiles pleines
+	for($i=1; $i<=$averageScore; $i++ ) {
+		$template = $template . '<i class="average-rating criteria-ratings fas fa-star"></i>';
+	}
+	// // generation d'une étoile moitié pleine
+	if($is_decimal) {
+	 	$template = $template . '<i class="average-rating criteria-ratings fas fa-star-half-alt"></i>';
+	}
+	// Generation étoiles vides
+	if($averageScore < 5) {
+		// Si il y a un score avec une décimal on généère un ombre d'étoiles vides - 1
+		if($is_decimal) {
+			for($i=1; $i<=$numberEmptyStars - 1; $i++) {
+				$template = $template .'<i class="average-rating criteria-ratings far fa-star"></i>';
+			}
+		}
+		else {
+			for($i=1; $i<=$numberEmptyStars; $i++) {
+				$template = $template .'<i class="average-rating criteria-ratings far fa-star"></i>';
+			}
+		}	
+	}
+	return $template;
+}
+	
+
+
+
+$authorization = "Authorization: Bearer 726d89b200f44e72d18fde1c2d6a1709:64a1d4f7662cd8d606cc9b2547f2072b6e03639abe0bf0b45b467d30632d781efc5d5b1ffb420a2ea921e73e469b00d0e669c77921ca925ae26a1ddc8b7af9f7ea40a0ff15098d16dfafc2dc7985a1f409127b7b4c81f4512fc372e010e2285ae53c6cf50bae40272cde7d011d63207e";
 
 global $wp;
 $city = $wp->query_vars['city'];
@@ -20,30 +79,42 @@ $id = $wp->query_vars['lawyerid'];
 /*
 	REQUEST API CURL PHP
 	/https://staging.app.feedbacklawyers.com/api/companies/:companyId
-	https://app.feedbacklawyers.com/api/ratings
+	https://staging.app.feedbacklawyers.com/api/ratings
+	https://staging.app.feedbacklawyers.com/api/companies/search?specialty[]=1&cities=["Marseille"]
+
+	/api/ratings/company/47916
 */
 
-$url = 'https://staging.app.feedbacklawyers.com/api/companies/'.$id;
+$url = 'https://app.feedbacklawyers.com/api/companies/'.$id;
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 $data = curl_exec($curl);
 $lawyer = json_decode($data);
 $lawyer = $lawyer->company;
+$langs = json_decode($lawyer->languages);
 curl_close($curl);
+
+$url = 'https://app.feedbacklawyers.com/api/ratings/company/'.$id;
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+$dataratings = curl_exec($curl);
+$ratings = json_decode($dataratings);
+$ratings = $ratings->ratings;
+curl_close($curl);
+
 ?>
 
-<pre> <?php pp($lawyer); ?> </pre>
+<!--<h4>Pretty-Print des langues: </h4>
+<pre> <?php pp($langs); ?> </pre>
+<h4>Pretty-Print de l'avocat: </h4> 
+<pre> <?php pp($lawyer); ?> </pre>-->
+<!--<h4>Pretty-Print des avis de l'avocat: </h4>
+<pre> <?php pp($ratings);?> </pre>-->
 
-<!-- <h1>Hello <?= $lawyer->firstName ?></h1>
-<h1>Hello <?= $lawyer->lastName ?></h1>
+ 
 
-<ul>
-<?php
-foreach($lawyer->specialties as $spe) { ?>
-	<li><?= $spe->displayFrFr ?></li>
-<?php } ?>
-</ul> -->
 
 
 <!DOCTYPE html>
@@ -54,25 +125,26 @@ foreach($lawyer->specialties as $spe) { ?>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Classimax</title>
+  <title>Votre recherche d'un avocat - Feedback Lawyers</title>
   
   <!-- FAVICON -->
   <link href="img/favicon.png" rel="shortcut icon">
   <!-- PLUGINS CSS STYLE -->
   <!-- <link href="plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet"> -->
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="../../../react3/plugins/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../../react3/plugins/bootstrap/css/bootstrap-slider.css">
+  <link rel="stylesheet" href="https://www.feedbacklawyers.com/react3/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://www.feedbacklawyers.com/react3/plugins/bootstrap/css/bootstrap-slider.css">
   <!-- Font Awesome -->
-  <link href="../../../react3/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <!-- <link href="https://www.feedbacklawyers.com/react3/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
   <!-- Owl Carousel -->
-  <link href="../../../react3/plugins/slick-carousel/slick/slick.css" rel="stylesheet">
-  <link href="../../../react3/plugins/slick-carousel/slick/slick-theme.css" rel="stylesheet">
+  <link href="https://www.feedbacklawyers.com/react3/plugins/slick-carousel/slick/slick.css" rel="stylesheet">
+  <link href="https://www.feedbacklawyers.com/react3/plugins/slick-carousel/slick/slick-theme.css" rel="stylesheet">
   <!-- Fancy Box -->
-  <link href="../../../react3/plugins/fancybox/jquery.fancybox.pack.css" rel="stylesheet">
-  <link href="../../../react3/plugins/jquery-nice-select/css/nice-select.css" rel="stylesheet">
+  <link href="https://www.feedbacklawyers.com/react3/plugins/fancybox/jquery.fancybox.pack.css" rel="stylesheet">
+  <link href="https://www.feedbacklawyers.com/react3/plugins/jquery-nice-select/css/nice-select.css" rel="stylesheet">
   <!-- CUSTOM CSS -->
-  <link href="../../../react3/css/style.css" rel="stylesheet">
+  <link href="https://www.feedbacklawyers.com/react3/css/style.css" rel="stylesheet">
 
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -83,6 +155,9 @@ foreach($lawyer->specialties as $spe) { ?>
   <![endif]-->
 
 </head>
+<!-- ShareThis -->
+<script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5f5238add449570011d2b24a&product=sticky-share-buttons" async="async"></script>
+
 
 <body class="body-wrapper">
 
@@ -91,68 +166,44 @@ foreach($lawyer->specialties as $spe) { ?>
 		<div class="row">
 			<div class="col-md-12">
 				<nav class="navbar navbar-expand-lg navbar-light navigation">
-					<a class="navbar-brand" href="index.html">
-						<img src="images/logo.png" alt="">
+					<a class="navbar-brand" href="https://www.feedbacklawyers.com/justiciables/">
+						<img class="logo" src="https://www.feedbacklawyers.com/react3/images/FBLV.png" alt="FeedbackLawyers logo">
 					</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-						<ul class="navbar-nav ml-auto main-nav ">
+						<ul class="navbar-nav ml-2 main-nav ">
 							<li class="nav-item active">
-								<a class="nav-link" href="index.html">Home</a>
+								<a class="nav-link" href="https://www.feedbacklawyers.com/justiciables/">Accueil</a>
 							</li>
 							<li class="nav-item dropdown dropdown-slide">
-								<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">Dashboard<span><i class="fa fa-angle-down"></i></span>
+								<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="https://www.feedbacklawyers.com/actualites/">Actualités<span><i class="fa fa-angle-down"></i></span>
 								</a>
 
 								<!-- Dropdown list -->
 								<div class="dropdown-menu">
-									<a class="dropdown-item" href="dashboard.html">Dashboard</a>
-									<a class="dropdown-item" href="dashboard-my-ads.html">Dashboard My Ads</a>
-									<a class="dropdown-item" href="dashboard-favourite-ads.html">Dashboard Favourite Ads</a>
-									<a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived Ads</a>
-									<a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>
+									<a class="dropdown-item" href="https://www.feedbacklawyers.com/actualites-particuliers/">PARTICULIERS</a>
+									<a class="dropdown-item" href="https://www.feedbacklawyers.com/actu-entreprises/">ENTREPRISES</a>
 								</div>
 							</li>
-							<li class="nav-item dropdown dropdown-slide">
-								<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									Pages <span><i class="fa fa-angle-down"></i></span>
-								</a>
-								<!-- Dropdown list -->
-								<div class="dropdown-menu">
-									<a class="dropdown-item" href="about-us.html">About Us</a>
-									<a class="dropdown-item" href="contact-us.html">Contact Us</a>
-									<a class="dropdown-item" href="user-profile.html">User Profile</a>
-									<a class="dropdown-item" href="404.html">404 Page</a>
-									<a class="dropdown-item" href="package.html">Package</a>
-									<a class="dropdown-item" href="single.html">Single Page</a>
-									<a class="dropdown-item" href="store.html">Store Single</a>
-									<a class="dropdown-item" href="single-blog.html">Single Post</a>
-									<a class="dropdown-item" href="blog.html">Blog</a>
-
-								</div>
+							
+							<li class="nav-item">
+								<a class="nav-link" href="https://www.feedbacklawyers.com/recrutement-feedback-lawyers/">REJOIGNEZ-NOUS</a>
 							</li>
-							<li class="nav-item dropdown dropdown-slide">
-								<a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									Listing <span><i class="fa fa-angle-down"></i></span>
-								</a>
-								<!-- Dropdown list -->
-								<div class="dropdown-menu">
-									<a class="dropdown-item" href="category.html">Ad-Gird View</a>
-									<a class="dropdown-item" href="ad-listing-list.html">Ad-List View</a>
-								</div>
+							<li class="nav-item">
+								<a class="nav-link" href="https://www.feedbacklawyers.com/contactez-nous/">CONTACTEZ-NOUS</a>
 							</li>
 						</ul>
-						<ul class="navbar-nav ml-auto mt-10">
+						<!-- <ul class="navbar-nav ml-auto mt-10">
 							<li class="nav-item">
 								<a class="nav-link login-button" href="login.html">Login</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link text-white add-button" href="ad-listing.html"><i class="fa fa-plus-circle"></i> Add Listing</a>
+								<a class="nav-link text-white add-button" href="ad-listing.html"><i class="fa fa-plus-circle"></i> Télecharger l'APP</a>
 							</li>
-						</ul>
+						</ul> -->
 					</div>
 				</nav>
 			</div>
@@ -162,191 +213,216 @@ foreach($lawyer->specialties as $spe) { ?>
 <section class="page-search">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12">
-				<!-- Advance Search -->
-				<div class="advance-search">
-					<form>
-						<div class="form-row">
-							<div class="form-group col-md-4">
-								<input type="text" class="form-control my-2 my-lg-0" id="inputtext4" placeholder="What are you looking for">
-							</div>
-							<div class="form-group col-md-3">
-								<input type="text" class="form-control my-2 my-lg-0" id="inputCategory4" placeholder="Category">
-							</div>
-							<div class="form-group col-md-3">
-								<input type="text" class="form-control my-2 my-lg-0" id="inputLocation4" placeholder="Location">
-							</div>
-							<div class="form-group col-md-2">
-
-								<button type="submit" class="btn btn-primary">Search Now</button>
-							</div>
-						</div>
-					</form>
+			<div class="col-md-6">
+				<div class="d-flex justify-content-start">
+					<div class="btn btn-light mt-15"><a href="https://www.feedbacklawyers.com/accueil/" target="_blank">Vous êtes avocat</a>
+					</div>
 				</div>
 			</div>
+			<div class="col-lg-4 col-md-7 box-app">
+        <!-- App promotion -->
+        <div class="block-2 app-promotion">
+          <div class="mobile d-flex">
+            
+              <!-- Icon -->
+              <img src="https://www.feedbacklawyers.com/react3/images/mobile.png" class="mobile-fl" alt="mobile-icon">
+            
+            <p class="white" style=style="margin: 3px 0px 10px 40px;">Déposer un avis gratuitement <i class="fas fa-star criteria-ratings"></i><i class="fas fa-star criteria-ratings"></i><i class="fas fa-star criteria-ratings"></i><i class="fas fa-star criteria-ratings"></i><i class="fas fa-star criteria-ratings"></i></p>
+          </div>
+          <div class="download-btn d-flex my-1">
+            <a href="https://play.google.com/store/apps/details?id=com.feedbacklawyers.publicmobileapp&hl=en"><img src="https://www.feedbacklawyers.com/react3/images/google-store.png" class="img-fluid google" alt=""></a>
+            <a href="https://apps.apple.com/us/app/feedback-lawyers/id1479196126?ls=1"><img src="https://www.feedbacklawyers.com/react3/images/app-store.png" class="img-fluid apple" alt=""></a>
+          </div>
+        </div>
+      </div>
+			<!--<div class="col-md-4">
+				
+				<div class="d-flex criteria-ratings">
+				<h6 class="white">Déposer un avis gratuitement : </h6>
+				<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+			</div>
+				<br>
+			<div class="d-flex justify-content-end">
+				<a href="https://play.google.com/store/apps/details?id=com.feedbacklawyers.publicmobileapp&hl=en" target="_blank"><img class="img-fluid apple" src="https://www.feedbacklawyers.com/react3/images/google-store.png " alt="App store logo"></a>
+				<a href="https://apps.apple.com/us/app/feedback-lawyers/id1479196126?ls=1" target="_blank"><img class="img-fluid google" src="https://www.feedbacklawyers.com/react3/images/app-store.png" alt="Google play logo"></a>
+			</div>
+				
+			</div>
+			<div class="col-md-2">
+			<div class="d-flex justify-content-start">
+				<img class="img-fluid mobile-fl" src="https://www.feedbacklawyers.com/react3/images/mobile.png" alt="App mobile">
+				</div>		
+			</div>-->
 		</div>
 	</div>
 </section>
 <!--===================================
 =            Store Section            =
 ====================================-->
-<section class="section bg-gray">
+<section class="section bg-gray2">
 	<!-- Container Start -->
 	<div class="container">
 		<div class="row">
 			<!-- Left sidebar -->
 			<div class="col-md-8">
 				<div class="product-details">
-					<h1 class="product-title">Hp Dual Core 2gb Ram-Slim Laptop Available In Very Low Price</h1>
+					<h1 class="product-title">Cabinet : <?= $lawyer->cabName ?></h1>
 					<div class="product-meta">
 						<ul class="list-inline">
-							<li class="list-inline-item"><i class="fa fa-user-o"></i> By <a href="">Andrew</a></li>
-							<li class="list-inline-item"><i class="fa fa-folder-open-o"></i> Category<a href="">Electronics</a></li>
-							<li class="list-inline-item"><i class="fa fa-location-arrow"></i> Location<a href="">Dhaka Bangladesh</a></li>
+							<!-- <li class="list-inline-item"><i class="fa fa-user-o"></i> By <a href="">Andrew</a></li> -->
+							<li><i class="fas fa-map-marker-alt"></i> Localisation : <?= $lawyer->workAddressCity ?>, <?= $lawyer->workAddressCountry ?></li>
+							<li class="list-inline-item"><i class="fas fa-gavel"></i> Domaine(s) de compétence :
+							<?php foreach($lawyer->specialties as $spe) { ?>
+							<li><?= $spe->displayFrFr ?></li>
+							<?php } ?>
 						</ul>
 					</div>
 
-					<!-- product slider -->
-					<div class="product-slider">
-						<div class="product-slider-item my-4" data-image="images/products/products-1.jpg">
-							<img class="img-fluid w-100" src="images/products/products-1.jpg" alt="product-img">
-						</div>
-						<div class="product-slider-item my-4" data-image="images/products/products-2.jpg">
-							<img class="d-block img-fluid w-100" src="images/products/products-2.jpg" alt="Second slide">
-						</div>
-						<div class="product-slider-item my-4" data-image="images/products/products-3.jpg">
-							<img class="d-block img-fluid w-100" src="images/products/products-3.jpg" alt="Third slide">
-						</div>
-						<div class="product-slider-item my-4" data-image="images/products/products-1.jpg">
-							<img class="d-block img-fluid w-100" src="images/products/products-1.jpg" alt="Third slide">
-						</div>
-						<div class="product-slider-item my-4" data-image="images/products/products-2.jpg">
-							<img class="d-block img-fluid w-100" src="images/products/products-2.jpg" alt="Third slide">
-						</div>
-					</div>
-					<!-- product slider -->
-
-					<div class="content mt-5 pt-5">
+					<div class="content mt-2 pt-2">
 						<ul class="nav nav-pills  justify-content-center" id="pills-tab" role="tablist">
 							<li class="nav-item">
 								<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home"
-								 aria-selected="true">Product Details</a>
+								 aria-selected="true">Fiche Contact</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile"
-								 aria-selected="false">Specifications</a>
-							</li>
+							
 							<li class="nav-item">
 								<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact"
-								 aria-selected="false">Reviews</a>
+								 aria-selected="false"><?= $lawyer->ratings->reviewsCount ?> Avis</a>
 							</li>
 						</ul>
 						<div class="tab-content" id="pills-tabContent">
 							<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-								<h3 class="tab-title">Product Description</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia laudantium beatae quod perspiciatis, neque
-									dolores eos rerum, ipsa iste cum culpa numquam amet provident eveniet pariatur, sunt repellendus quas
-									voluptate dolor cumque autem molestias. Ab quod quaerat molestias culpa eius, perferendis facere vitae commodi
-									maxime qui numquam ex voluptatem voluptate, fuga sequi, quasi! Accusantium eligendi vitae unde iure officia
-									amet molestiae velit assumenda, quidem beatae explicabo dolore laboriosam mollitia quod eos, eaque voluptas
-									enim fuga laborum, error provident labore nesciunt ad. Libero reiciendis necessitatibus voluptates ab
-									excepturi rem non, nostrum aut aperiam? Itaque, aut. Quas nulla perferendis neque eveniet ullam?</p>
-
-								<iframe width="100%" height="400" src="https://www.youtube.com/embed/LUH7njvhydE?rel=0&amp;controls=0&amp;showinfo=0"
-								 frameborder="0" allowfullscreen></iframe>
-								<p></p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam sed, officia reiciendis necessitatibus
-									obcaecati eum, quaerat unde illo suscipit placeat nihil voluptatibus ipsa omnis repudiandae, excepturi! Id
-									aperiam eius perferendis cupiditate exercitationem, mollitia numquam fuga, inventore quam eaque cumque fugiat,
-									neque repudiandae dolore qui itaque iste asperiores ullam ut eum illum aliquam dignissimos similique! Aperiam
-									aut temporibus optio nulla numquam molestias eum officia maiores aliquid laborum et officiis pariatur,
-									delectus sapiente molestiae sit accusantium a libero, eligendi vero eius laboriosam minus. Nemo quibusdam
-									nesciunt doloribus repellendus expedita necessitatibus velit vero?</p>
-
-							</div>
-							<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-								<h3 class="tab-title">Product Specifications</h3>
-								<table class="table table-bordered product-table">
-									<tbody>
-										<tr>
-											<td>Seller Price</td>
-											<td>$450</td>
-										</tr>
-										<tr>
-											<td>Added</td>
-											<td>26th December</td>
-										</tr>
-										<tr>
-											<td>State</td>
-											<td>Dhaka</td>
-										</tr>
-										<tr>
-											<td>Brand</td>
-											<td>Apple</td>
-										</tr>
-										<tr>
-											<td>Condition</td>
-											<td>Used</td>
-										</tr>
-										<tr>
-											<td>Model</td>
-											<td>2017</td>
-										</tr>
-										<tr>
-											<td>State</td>
-											<td>Dhaka</td>
-										</tr>
-										<tr>
-											<td>Battery Life</td>
-											<td>23</td>
-										</tr>
-									</tbody>
-								</table>
+								<h3 class="tab-title">Description :</h3>
+								<p><?= $lawyer->presentation ?></p>
+								<h3 class="tab-title">Adresse :</h3>
+								<p><?= $lawyer->workAddressLine1 ?></p>
+								<p><?= $lawyer->workAddressLine2 ?></p>
+								<p><?= $lawyer->workAddressZipcode ?> <?= $lawyer->workAddressCity ?></p>
+								<p><?= $lawyer->workAddressCountry ?></p>
+								<p>Téléphone: <?= $lawyer->phoneNumber ?></p>
+								<p><strong>Email :</strong> <a href="mailto:<?= $lawyer->emailAddress ?>"><?= $lawyer->emailAddress ?></a></p>
+								<p><strong>Site web :</strong> <a href="http://<?= $lawyer->websiteUrl ?>" target="_blank"><?= $lawyer->websiteUrl ?></a></p>
+								<h3 class="tab-title">Langue(s) parlée(s): </h3> 
+								<?php
+								foreach($langs as $language) { ?>
+									<p><?= $language->name ?></p>
+									
+								<?php }
+								?>
 							</div>
 							<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-								<h3 class="tab-title">Product Review</h3>
+								
+								<h4 class="tab-title">Note moyenne des avis : <?= printAverageScore($lawyer->ratings->averageRating) ?> </h4>
+								
+								<h3 class="tab-title">Avis clients certifiés :</h3>
 								<div class="product-review">
-									<div class="media">
-										<!-- Avater -->
-										<img src="images/user/user-thumb.jpg" alt="avater">
-										<div class="media-body">
-											<!-- Ratings -->
-											<div class="ratings">
-												<ul class="list-inline">
-													<li class="list-inline-item">
-														<i class="fa fa-star"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="fa fa-star"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="fa fa-star"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="fa fa-star"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="fa fa-star"></i>
-													</li>
-												</ul>
+									
+										
+											<?php
+											foreach($ratings as $rate) {  ?>
+											
+											<div class="media">
+										<!-- Avatar -->
+										<!-- img src="https://www.feedbacklawyers.com/react3/images/user/user-thumb.jpg" alt="avatar"> -->
+											<div class="media-body">
+											<img src="https://www.feedbacklawyers.com/react3/images/approved-review2.png" alt="avis approuvé">
+												<div class="avis">
+													<!-- Ratings -->
+													<div class="ratings">
+											<div class="date">											
+												<p>Date de l'avis : <?php
+												$date2 = new DateTime($rate->createdAt);
+												echo $date2->format('d-m-Y');
+												?></p>
+												
 											</div>
-											<div class="name">
-												<h5>Jessica Brown</h5>
+											
+											
+
+											<p class="font-weight-bold">Note du client : <?= $rate->rating ?> / <?= $rate->maximumRating ?></p>
+											<div class="criteres">
+												<div class="grade0">
+												<?php 
+													echo printRatings($rate->criteria0Grade);
+													//$i = $rate->criteria0Grade;	
+													// if ($i == 0) {
+													// 	echo "&#9734;&#9734;&#9734;&#9734;&#9734;";
+													// 	} elseif ($i == 1) {
+													// 	echo "&#9733;&#9734;&#9734;&#9734;&#9734;";
+													// 	} elseif ($i == 2) {
+													// 	echo "&#9733;&#9733;&#9734;&#9734;&#9734;";
+													// 	}elseif ($i == 3) {
+													// 	echo "&#9733;&#9733;&#9733;&#9734;&#9734;";
+													// 	}elseif ($i == 4) {
+													// 	echo "&#9733;&#9733;&#9733;&#9733;&#9734;";
+													// 	}elseif ($i == 5) {
+													// 	echo "&#9733;&#9733;&#9733;&#9733;&#9733;";
+													// 	}
+												?>
+											<span class="ml-2 font-italic">Ecoute et compréhension des besoins</span>
+												</div>
+												<div class="grade1">
+												<?php 
+													echo printRatings($rate->criteria1Grade);
+												?>
+											<span class="ml-2 font-italic">Disponibilité et réactivité</span>
+												</div>
+												<div class="grade2">
+												<?php 
+													echo printRatings($rate->criteria2Grade);
+												?>
+											<span class="ml-2 font-italic">Force de proposition et solutions innovantes</span>
+												</div>
+												<div class="grade3">
+												<?php 
+													echo printRatings($rate->criteria3Grade);
+												?>
+											<span class="ml-2 font-italic">Qualité du suivi et communication</span>
+												</div>
+												<div class="grade4"><?php 
+													echo printRatings($rate->criteria4Grade);
+												?>
+											<span class="ml-2 font-italic">Pluridisciplinaire / Prise en charge globale</span>
+												</div>
+												<div class="grade5"><?php 
+													echo printRatings($rate->criteria5Grade);
+												?>
+
+											<span class="ml-2 font-italic">Rémunération forfaitaire / honoraires justes</span>
+												</div>
+												<div class="grade6"><?php 
+													echo printRatings($rate->criteria6Grade);
+												?>
+											<span class="ml-2 font-italic">Degrés de recommandation</span>
+												</div>
 											</div>
-											<div class="date">
-												<p>Mar 20, 2018</p>
+
+											
 											</div>
+											<!-- <div class="name">
+												<h5>Client certifié</h5>
+											</div> -->
+											<br>
 											<div class="review-comment">
-												<p>
-													Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremqe laudant tota rem ape
-													riamipsa eaque.
-												</p>
+												<p><?= $rate->comment ?></p>
 											</div>
+											
 										</div>
-									</div>
-									<div class="review-submission">
+											</div>
+											</div>
+												<?php } // end foreach
+												?>
+											
+											
+
+
+
+											
+									
+									
+									<!-- <div class="review-submission">
 										<h3 class="tab-title">Submit your review</h3>
-										<!-- Rate -->
+										<!-- Rate 
 										<div class="rate">
 											<div class="starrr"></div>
 										</div>
@@ -362,11 +438,11 @@ foreach($lawyer->specialties as $spe) { ?>
 													<textarea name="review" id="review" rows="10" class="form-control" placeholder="Message"></textarea>
 												</div>
 												<div class="col-12">
-													<button type="submit" class="btn btn-main">Sumbit</button>
+													<button type="submit" class="btn btn-main">Submit</button>
 												</div>
 											</form>
 										</div>
-									</div>
+									</div> -->
 								</div>
 							</div>
 						</div>
@@ -375,38 +451,53 @@ foreach($lawyer->specialties as $spe) { ?>
 			</div>
 			<div class="col-md-4">
 				<div class="sidebar">
-					<div class="widget price text-center">
-						<h4>Price</h4>
-						<p>$230</p>
-					</div>
+					<!-- <div class="widget price text-center">
+						<h4>Zone à définir</h4>
+						<p>Lien à définir</p>
+					</div> -->
 					<!-- User Profile widget -->
 					<div class="widget user text-center">
-						<img class="rounded-circle img-fluid mb-5 px-5" src="images/user/user-thumb.jpg" alt="">
+					<?php 
+					if( !isset($lawyer->user->profilePictureUrl) && !isset($lawyer->profilePictureUrl)) {
+						echo '<img class="rounded-circle img-fluid mb-5 px-5" data-no-lazy="1" src="https://www.feedbacklawyers.com/react3/images/icon-defaultprofilepicture.png" alt"Profile picture"/>'
+						;} // FIN IF
+
+						else {
+						echo '<img class="rounded-circle img-fluid mb-5 px-5" data-no-lazy="1" src="' . $lawyer->user->profilePictureUrl .'" />' 
+						;} // FIN ELSE 
+					?>
+						<!--<img class="rounded-circle img-fluid mb-5 px-5" src="https://www.feedbacklawyers.com/react3/images/user/user-thumb.jpg" alt=""> -->
 						<h4><a href=""><?= $lawyer->firstName . ' ' . $lawyer->lastName ?> </a></h4>
-						<p class="member-time">Member Since Jun 27, 2017</p>
-						<a href="">See all ads</a>
+						<p class="member-time">Date de prestation de serment: </p>
+						<p class="member-time">
+							<?php
+							$date = new DateTime($lawyer->oathTakenDate);
+							echo $date->format('d-m-Y');
+							?>
+						</p>
+						<p><?= $lawyer->ratings->reviewsCount ?> avis clients certifiés</p>
+
+						<?= printAverageScore($lawyer->ratings->averageRating)?>
 						<ul class="list-inline mt-20">
-							<li class="list-inline-item"><a href="" class="btn btn-contact d-inline-block  btn-primary px-lg-5 my-1 px-md-3">Contact</a></li>
-							<li class="list-inline-item"><a href="" class="btn btn-offer d-inline-block btn-primary ml-n1 my-1 px-lg-4 px-md-3">Make an
-									offer</a></li>
+							<li class="list-inline-item"><a href="mailto:<?= $lawyer->emailAddress ?>" class="btn btn-contact btn-lawyer d-inline-block px-lg-5 my-1 px-md-3">Contact</a></li>
 						</ul>
 					</div>
-					<!-- Map Widget -->
+					<!-- Map Widget 
 					<div class="widget map">
 						<div class="map">
 							<div id="map_canvas" data-latitude="51.507351" data-longitude="-0.127758"></div>
 						</div>
 					</div>
-					<!-- Rate Widget -->
+					<!-- Rate Widget 
 					<div class="widget rate">
-						<!-- Heading -->
+						<!-- Heading 
 						<h5 class="widget-header text-center">What would you rate
 							<br>
-							this product</h5>
-						<!-- Rate -->
+							this product</h5>-->
+						<!-- Rate 
 						<div class="starrr"></div>
-					</div>
-					<!-- Safety tips widget -->
+					</div>-->
+					<!-- Safety tips widget 
 					<div class="widget disclaimer">
 						<h5 class="widget-header">Safety Tips</h5>
 						<ul>
@@ -415,16 +506,16 @@ foreach($lawyer->specialties as $spe) { ?>
 							<li>Pay only after collecting the item</li>
 							<li>Pay only after collecting the item</li>
 						</ul>
-					</div>
-					<!-- Coupon Widget -->
+					</div>-->
+					<!-- Coupon Widget 
 					<div class="widget coupon text-center">
-						<!-- Coupon description -->
+						<!-- Coupon description 
 						<p>Have a great product to post ? Share it with
 							your fellow users.
 						</p>
-						<!-- Submii button -->
+						<!-- Submit button 
 						<a href="" class="btn btn-transparent-white">Submit Listing</a>
-					</div>
+					</div> -->
 
 				</div>
 			</div>
@@ -437,121 +528,109 @@ foreach($lawyer->specialties as $spe) { ?>
 =            Footer            =
 =============================-->
 
-<footer class="footer section section-sm">
+<footer class="footer section section-sm footer-width">
   <!-- Container Start -->
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-3 col-md-7 offset-md-1 offset-lg-0">
+	<div class="container">
+		<div class="row-nowrap">
+			<div class="col-lg-4 col-md-7 offset-md-1 offset-lg-0">
         <!-- About -->
-        <div class="block about">
+				<div class="block about">
           <!-- footer logo -->
-          <img src="../../../react3/images/logo-footer.png" alt="">
-          <!-- description -->
-          <p class="alt-color">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-            laboris nisi ut aliquip ex ea commodo consequat.</p>
-        </div>
-      </div>
-      <!-- Link list -->
-      <div class="col-lg-2 offset-lg-1 col-md-3">
-        <div class="block">
-          <h4>Site Pages</h4>
-          <ul>
-            <li><a href="#">Boston</a></li>
-            <li><a href="#">How It works</a></li>
-            <li><a href="#">Deals & Coupons</a></li>
-            <li><a href="#">Articls & Tips</a></li>
-            <li><a href="terms-condition.html">Terms & Conditions</a></li>
-          </ul>
-        </div>
-      </div>
-      <!-- Link list -->
-      <div class="col-lg-2 col-md-3 offset-md-1 offset-lg-0">
-        <div class="block">
-          <h4>Admin Pages</h4>
-          <ul>
-            <li><a href="category.html">Category</a></li>
-            <li><a href="single.html">Single Page</a></li>
-            <li><a href="store.html">Store Single</a></li>
-            <li><a href="single-blog.html">Single Post</a>
-            </li>
-            <li><a href="blog.html">Blog</a></li>
+				<img class="logo" src="https://www.feedbacklawyers.com/react3/images/FBLV.png" alt="logo feedback lawyers">
+				<!-- description -->
+				<p class="alt-color">Inscrits dans une démarche de qualité de la relation client nous développons un outil permettant d’apporter clarté et transparence au métier d’avocat.</p>
 
+				</div>
+			</div>
+<!-- Link list -->
+			<div class="col offset-lg-1 col-md-3">
+				<div class="block">
+					<h4>Informations pratiques</h4>
+						<ul>
+							<li><a href="https://www.feedbacklawyers.com/conditions-generales-utilisation-entreprises-particuliers/">Conditions d'utilisations Justiciables</a></li>
+							<li><a href="https://www.feedbacklawyers.com/politique-de-confidentialite/">Politique de confidentialité</a></li>
+							<li><a href="https://www.feedbacklawyers.com/regles-de-referencement/">Règles de référencement</a></li>
+							<li><a href="https://www.feedbacklawyers.com/mentions-legales/">Mentions légales</a></li>
+						</ul>
+				</div>
+			</div>
+<!-- Link list -->
+			<div class="col col-md-5 offset-md-1 offset-lg-0">
+				<div class="block">
+					<h4>Retrouvez plus d'actualités sur nos réseaux sociaux</h4>
+						<ul>
+							<li><a href="https://www.facebook.com/FeedbackLawyers/"><i class="fab fa-facebook-square"></i> Facebook</a></li>
+							<li><a href="https://twitter.com/FeedbackLawyers?s=20"><i class="fab fa-twitter-square"></i> Twitter</a></li>
+							<li><a href="https://www.linkedin.com/company/feedback-lawyers/"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+							<li><a href="https://www.youtube.com/channel/UCKkxviN3T-FCS74Bl7TF_wg"><i class="fab fa-youtube-square"></i> Youtube</a></li>
+						</ul>
+				</div>
+			</div>
+<!-- Promotion 
+			<div class="col col-md-5">
+					<!-- App promotion 
+					<div class="block-2 app-promotion">
+						<div class="mobile d-flex">
+						<a href="">
+						<!-- Icon 
+						<img src="https://www.feedbacklawyers.com/react3/images/footer/phone-icon.png" alt="mobile-icon">
+						</a>
+						<p>Téléchargez l'App Feedback Lawyers:</p>
+						</div>
+					<div class="download-btn d-flex my-3">
+						<a href="https://play.google.com/store/apps/details?id=com.feedbacklawyers.publicmobileapp&hl=en"><img src="https://www.feedbacklawyers.com/react3/images/apps/google-play-store.png" class="img-fluid" alt=""></a>
+						<a href="https://apps.apple.com/us/app/feedback-lawyers/id1479196126?ls=1" class=" ml-3"><img src="https://www.feedbacklawyers.com/react3/images/apps/apple-app-store.png" class="img-fluid" alt=""></a>
+					</div>
+					</div>
+				</div>-->
+		</div>
+	</div>
+<!-- Container End -->
+</footer><!-- Footer Bottom -->
 
-
-          </ul>
-        </div>
-      </div>
-      <!-- Promotion -->
-      <div class="col-lg-4 col-md-7">
-        <!-- App promotion -->
-        <div class="block-2 app-promotion">
-          <div class="mobile d-flex">
-            <a href="">
-              <!-- Icon -->
-              <img src="../../../react3/images/footer/phone-icon.png" alt="mobile-icon">
-            </a>
-            <p>Get the Dealsy Mobile App and Save more</p>
-          </div>
-          <div class="download-btn d-flex my-3">
-            <a href="#"><img src="../../../react3/images/apps/google-play-store.png" class="img-fluid" alt=""></a>
-            <a href="#" class=" ml-3"><img src="../../../react3/images/apps/apple-app-store.png" class="img-fluid" alt=""></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Container End -->
-</footer>
-<!-- Footer Bottom -->
 <footer class="footer-bottom">
   <!-- Container Start -->
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6 col-12">
+<div class="container">
+<div class="row">
+<div class="col-sm-6 col-12">
         <!-- Copyright -->
-        <div class="copyright">
-          <p>Copyright © <script>
-              var CurrentYear = new Date().getFullYear()
-              document.write(CurrentYear)
-            </script>. All Rights Reserved, theme by <a class="text-primary" href="https://themefisher.com" target="_blank">themefisher.com</a></p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-12">
+<div class="copyright">
+
+<p>Copyrights © 2020 - <a href="https://www.feedbacklawyers.com" target="_blank" rel="noopener noreferrer" class="link-footer">FeedbackLawyers.com</a></p>
+
+</div>
+</div>
+<div class="col-sm-6 col-12">
         <!-- Social Icons -->
-        <ul class="social-media-icons text-right">
-          <li><a class="fa fa-facebook" href="https://www.facebook.com/themefisher" target="_blank"></a></li>
-          <li><a class="fa fa-twitter" href="https://www.twitter.com/themefisher" target="_blank"></a></li>
-          <li><a class="fa fa-pinterest-p" href="https://www.pinterest.com/themefisher" target="_blank"></a></li>
-          <li><a class="fa fa-vimeo" href=""></a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <!-- Container End -->
-  <!-- To Top -->
-  <div class="top-to">
-    <a id="top" class="" href="#"><i class="fa fa-angle-up"></i></a>
-  </div>
-</footer>
+<ul class="social-media-icons text-right">
+ 	<li><a class="fab fa-facebook" href="https://www.facebook.com/FeedbackLawyers/" target="_blank" rel="noopener noreferrer"></a></li>
+ 	<li><a class="fab fa-twitter" href="https://twitter.com/FeedbackLawyers" target="_blank" rel="noopener noreferrer"></a></li>
+ 	<li><a class="fab fa-youtube" href="https://www.youtube.com/channel/UCKkxviN3T-FCS74Bl7TF_wg" target="_blank" rel="noopener noreferrer"></a></li>
+ 	<li><a class="fab fa-linkedin-in" href="https://www.linkedin.com/company/feedback-lawyers/"></a></li>
+</ul>
+</div>
+</div>
+</div>
 
 <!-- JAVASCRIPTS -->
-<script src="../../../react3/plugins/jQuery/jquery.min.js"></script>
-<script src="../../../react3/plugins/bootstrap/js/popper.min.js"></script>
-<script src="../../../react3/plugins/bootstrap/js/bootstrap.min.js"></script>
-<script src="../../../react3/plugins/bootstrap/js/bootstrap-slider.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/jQuery/jquery.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/bootstrap/js/popper.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/bootstrap/js/bootstrap-slider.js"></script>
   <!-- tether js -->
-<script src="../../../react3/plugins/tether/js/tether.min.js"></script>
-<script src="../../../react3/plugins/raty/jquery.raty-fa.js"></script>
-<script src="../../../react3/plugins/slick-carousel/slick/slick.min.js"></script>
-<script src="../../../react3/plugins/jquery-nice-select/js/jquery.nice-select.min.js"></script>
-<script src="../../../react3/plugins/fancybox/jquery.fancybox.pack.js"></script>
-<script src="../../../react3/plugins/smoothscroll/SmoothScroll.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/tether/js/tether.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/raty/jquery.raty-fa.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/slick-carousel/slick/slick.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/jquery-nice-select/js/jquery.nice-select.min.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/fancybox/jquery.fancybox.pack.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/smoothscroll/SmoothScroll.min.js"></script>
 <!-- google map -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&libraries=places"></script>
-<script src="../../../react3/plugins/google-map/gmap.js"></script>
-<script src="../../../react3/js/script.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/plugins/google-map/gmap.js"></script>
+<script src="https://www.feedbacklawyers.com/react3/js/script.js"></script>
+
 
 </body>
 
 </html>
+
