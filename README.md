@@ -17,7 +17,7 @@
  
  1. Clone repository
  2. Ouvrir js file et aller sur {/* AFFICHER LA LISTE DES RESULTATS */}
- 3. Quand vous testerez le composant en ouvrant les différentes versions via fichier html, cherchez "john" (John Lancaster) ou Gery (Gery Tang Seng)
+ 3. Quand vous testerez le composant en ouvrant les différentes versions via fichier html, cherchez "john" (John Lancaster)
  - le composant se base sur la version STAGING de l'api avec ces faux avocats, profils complets avec un commentaire type avis client.
  
 4. le dossier "component version wordpress" sert à inclure les fichiers au sein d'un thème. Afin d'intégrer le composant, il faut insérer le nécéssaire dans une page HTML comme ceci par exemple:
